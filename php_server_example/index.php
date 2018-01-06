@@ -1,11 +1,11 @@
 <?php
-
     class PlantSystem{
         public $status = array(
             'badReq' => 400,
             'ok' => 200,
             'unauth' => 401,
-            'err' => 520
+            'err' => 520,
+            'teapot' => 418
         );
 
         protected $config = null;
@@ -16,11 +16,11 @@
 
 
             if($_SERVER['REQUEST_METHOD'] === 'POST'){
-
+                
                 if(isset($_POST['auth'],$_POST['moisture'],$_POST['temperature'])){
 
                     if($this->authenticateRequest($_POST['auth'])){
-
+                        
                         $t = $_POST['temperature'];
                         $t = doubleval($t);
 
@@ -46,12 +46,12 @@
                                 $respCode = $this->status['badReq']
                             );
                         }
-                    }else{
+                    }else{ //invalid token
                         $this->sendUnauth();
                     }
-                }else{
+                }else{ //Missing data 
                     $this->sendResponse(
-                        $msg = "Missing required data",
+                        $msg = "Missing required data", 
                         $respCode = $this->status['badReq']
                     );
                 }
@@ -65,20 +65,34 @@
                     $this->sendUnauth();
                 }
 
-            }else{
-                $respCode = $this->status['badReq'];
-                $msg = "Hello, World!";
+            }else{ //just send back nonsense
+                $this->sendResponse(
+                    $msg = "I'm a teapot!",
+                    $respCode = $this->status['teapot']
+                );
             }
 
         }
 
+        /**
+         * sendUnauth() - sends unauthorized msg and response code via sendResponse()
+         **/
         public function sendUnauth(){
             $this->sendResponse('Not Authorized', $this->status['unauth']);
         }
 
+        /**
+         * sendResponse($msd, $httpRespCode)
+         *
+         * Sends the response code and message back to the requestee
+         *
+         * @param str $msg - what to echo back
+         * @param int $httpRespCode - the HTTP response code to send
+         * @return void
+         **/
         public function sendResponse($msg, $httpRespCode){
+            http_response_code($httpRespCode); 
             echo "{$msg}\n";
-            http_response_code($httpRespCode);
         }
 
 
@@ -88,7 +102,7 @@
          * checks if $token is valid
          *
          * @param str $token - token to be authenticated
-         * @return book $isValid
+         * @return book $isValid 
          **/
         public function authenticateRequest($token){
             $isValid = false;
@@ -112,7 +126,7 @@
         public function savePlantData($t, $m){
             $saved = true;
             $data = json_encode(array('date' => date('Y-m-d H:i'), 't' => $t, 'm' => $m));
-            $saveStatus = file_put_contents('sensor_data', $data);
+            $saveStatus = file_put_contents('sensor_data', $data);  
             if($saveStatus === FALSE){
                 $saved = FALSE;
                 $err = 'ERR: could not save plant info';
@@ -122,6 +136,11 @@
             return $saved;
         }
 
+        /**
+         * getPlantData()
+         *
+         * @return str $data - json string of data
+         **/
         public function getPlantData(){
             $ret = 'no data available';
 
@@ -135,7 +154,7 @@
 
             return $ret;
         }
-    }
+    } 
 
     try{
         $ps = new PlantSystem();
@@ -144,3 +163,5 @@
     }
 
     exit;
+
+
