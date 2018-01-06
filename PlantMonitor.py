@@ -7,6 +7,7 @@ import re
 import urllib
 import urllib2
 import hashlib
+import os
 
 class PlantNetworkSave:
     def __init__(self, url=None, data=None):
@@ -14,7 +15,11 @@ class PlantNetworkSave:
         if(data != None):
             configData = None
 
-            with open('config.json', 'r') as configFile:
+            scriptDir = os.path.dirname(os.path.realpath(__file__))
+
+            configFilename = 'config.json'
+            
+            with open(os.path.join(scriptDir, configFilename), 'r') as configFile:
                 configData = configFile.read().replace('\n','')
                 configData = json.loads(configData)
 
