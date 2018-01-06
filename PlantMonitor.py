@@ -34,9 +34,7 @@ class PlantNetworkSave:
         h = hashlib.new('sha256')
         h.update(token)
 
-        auth = h.hexdigest()
-
-        data['auth'] = auth
+        data['auth'] = h.hexdigest()
 
         data = urllib.urlencode(data)
 
