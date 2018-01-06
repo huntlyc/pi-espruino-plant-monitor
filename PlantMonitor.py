@@ -20,10 +20,10 @@ class PlantNetworkSave:
 
             
             if(configData != None):
-                self.__sendData(configData['url'],data,configData['token'])
+                self.__sendData(configData['url'], data, configData['token'])
 
 
-    def __sendData(self, data,token):
+    def __sendData(self, url, data, token):
 
 
         h = hashlib.new('sha256')
@@ -35,7 +35,7 @@ class PlantNetworkSave:
 
         data = urllib.urlencode(data)
 
-        request = urllib2.Request(self.__url,data=data, headers={"User-Agent":"Magic Browser"})
+        request = urllib2.Request(url=url,data=data, headers={"User-Agent":"Magic Browser"})
 
         response = urllib2.urlopen(request)
 
