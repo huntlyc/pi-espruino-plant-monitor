@@ -1,5 +1,4 @@
 <?php
-    define('AUTH_TOKEN', 'YOUR_MADE_UP_TOKEN');
 
     class PlantSystem{
         public $status = array(
@@ -17,11 +16,11 @@
 
 
             if($_SERVER['REQUEST_METHOD'] === 'POST'){
-                
+
                 if(isset($_POST['auth'],$_POST['moisture'],$_POST['temperature'])){
 
                     if($this->authenticateRequest($_POST['auth'])){
-                        
+
                         $t = $_POST['temperature'];
                         $t = doubleval($t);
 
@@ -52,7 +51,7 @@
                     }
                 }else{
                     $this->sendResponse(
-                        $msg = "Missing required data", 
+                        $msg = "Missing required data",
                         $respCode = $this->status['badReq']
                     );
                 }
@@ -79,7 +78,7 @@
 
         public function sendResponse($msg, $httpRespCode){
             echo "{$msg}\n";
-            http_response_code($httpRespCode); 
+            http_response_code($httpRespCode);
         }
 
 
@@ -89,7 +88,7 @@
          * checks if $token is valid
          *
          * @param str $token - token to be authenticated
-         * @return book $isValid 
+         * @return book $isValid
          **/
         public function authenticateRequest($token){
             $isValid = false;
@@ -113,7 +112,7 @@
         public function savePlantData($t, $m){
             $saved = true;
             $data = json_encode(array('date' => date('Y-m-d H:i'), 't' => $t, 'm' => $m));
-            $saveStatus = file_put_contents('sensor_data', $data);  
+            $saveStatus = file_put_contents('sensor_data', $data);
             if($saveStatus === FALSE){
                 $saved = FALSE;
                 $err = 'ERR: could not save plant info';
@@ -136,7 +135,7 @@
 
             return $ret;
         }
-    } 
+    }
 
     try{
         $ps = new PlantSystem();
@@ -145,5 +144,3 @@
     }
 
     exit;
-
-
